@@ -190,7 +190,7 @@ function Form({ language }) {
         setTimeout(() => {
           setShowSuccessAlert(false);
           // Change the location after successful submission
-          history('/DeepSleepMaskEGP/thank_you_page');  // Update the path to match App.jsx routing
+          history('/thank_you_page');  // Updated path for Netlify deployment
           handleLinkClick();
         }, 1000);
       })

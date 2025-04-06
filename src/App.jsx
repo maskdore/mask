@@ -93,12 +93,12 @@ function App() {
       </Button> */}
 
       <Routes>
-        <Route path="/DeepSleepMaskEGP" element={<LandingPage language={language} />} />
-        <Route path="/DeepSleepMaskEGP/refund_policy" element={<RefundPolicy language={language} />} />
-        <Route path="/DeepSleepMaskEGP/shipping_policy" element={<ShippingPolicy language={language} />} />
-        <Route path="/DeepSleepMaskEGP/terms_of_service" element={<TermsOfService language={language} />} />
-        <Route path="/DeepSleepMaskEGP/privacy_policy" element={<PrivacyInformation language={language} />} />
-        <Route path="/DeepSleepMaskEGP/thank_you_page" element={<ThankYou language={language} />} />
+        <Route path="/" element={<LandingPage language={language} />} />
+        <Route path="/refund_policy" element={<RefundPolicy language={language} />} />
+        <Route path="/shipping_policy" element={<ShippingPolicy language={language} />} />
+        <Route path="/terms_of_service" element={<TermsOfService language={language} />} />
+        <Route path="/privacy_policy" element={<PrivacyInformation language={language} />} />
+        <Route path="/thank_you_page" element={<ThankYou language={language} />} />
       </Routes>
 
       
