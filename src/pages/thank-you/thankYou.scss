@@ -1,0 +1,102 @@
+.order-confirmation {
+  margin: 9rem auto 1rem;
+  max-width: 1200px;
+  padding: 0 1rem;
+  font-family: 'Arial', sans-serif;
+
+  .confirmation-header {
+    text-align: center;
+    padding: 0px 2rem;
+    .checkmark-circle {
+      // Style for the checkmark circle
+      color: var(--green-color);
+    }
+    h1 {
+      // Style for the main heading
+      font-size: 2.3rem;
+      margin: 2rem 0 1rem;
+    }
+    p {
+      // Style for the paragraph
+      margin: 1.5rem 0;
+      color: var(--gray-color);
+      font-weight: 600;
+      line-height: 1.5rem;
+    }
+  }
+
+  .contact-button {
+    // Style for the contact button
+    width: 90%;
+    text-align: center;
+    background-color: var(--green-color);
+    padding: 1rem;
+    margin: 1rem auto 4rem;
+    display: block;
+    color: var(--white-color);
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    
+    &:hover {
+      background-color: darken(#00a067, 10%);
+    }
+  }
+
+  .service-offers {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 1rem;
+    
+    .offer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem;
+      
+      .icon {
+        margin-right: 0.5rem;
+      }
+      
+      p {
+        // Style for the text under icons
+        text-indent: .5rem;
+        width: fit-content;
+        text-align: center;
+        line-height: 1.5rem;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Media queries for responsiveness
+@media (max-width: 768px) {
+  .order-confirmation {
+    margin: 6rem auto 1rem;
+    
+    .confirmation-header {
+      padding: 0 1rem;
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+    
+    .service-offers {
+      flex-direction: column;
+      align-items: center;
+      
+      .offer {
+        width: 100%;
+        margin-bottom: 1rem;
+        justify-content: flex-start;
+        padding-left: 2rem;
+      }
+    }
+  }
+}
