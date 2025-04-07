@@ -124,6 +124,15 @@ function Form({ language }) {
   function handleInputChange(e) {
     const { name, value } = e.target;
 
+    // For phone numbers, allow both Arabic and English digits
+    if (name === 'Phone1') {
+      // Allow Arabic numerals, English numerals, spaces, plus, and hyphens
+      const isValidChar = /^[\u0660-\u0669\u06F0-\u06F9\d\s+\-()]*$/.test(value);
+      if (!isValidChar && value !== '') {
+        return;
+      }
+    }
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -163,9 +172,13 @@ function Form({ language }) {
       Quantity: selectedOption,
     };
 
-    // ==== For Form Data ====
-    const formEle = document.querySelector("form");
-    const formDataObj = new FormData(formEle);
+    // Create a new FormData instance
+    const formDataObj = new FormData();
+    
+    // Add each field manually to ensure proper encoding
+    Object.keys(submissionFormData).forEach(key => {
+      formDataObj.append(key, submissionFormData[key]);
+    });
 
     fetch("https://sheetdb.io/api/v1/10gjf6eedx0vm", {
       method: "POST",
@@ -198,24 +211,6 @@ function Form({ language }) {
         console.log(error);
         setLoading(false);
       });
-
-    // fetch("https://sheetdb.io/api/v1/nzwpvtci7n8fl")
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     // Check if data is an array and has length
-    //     if (Array.isArray(data) && data.length > 0) {
-    //       // Count the number of rows
-    //       const rowCount = data.length;
-
-    //       // Store the row count in state
-    //       setRowCount(rowCount);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-
-    
   }
 
   // ====== Reset Function =======
@@ -249,11 +244,11 @@ function Form({ language }) {
   }, [formData.Quantity, selectedOption]);
 
   const validatePhone = () => {
-    const phoneRegex = /^(\+?\d{0,14})?$/; // Change this regex according to your phone number format
+    // Updated regex to accept both Arabic and English numbers, with optional country code
+    const phoneRegex = /^[\u0660-\u0669\u06F0-\u06F9\d\s+\-()]{8,}$/;
 
     if (!phoneRegex.test(formData.Phone1)) {
       // Invalid phone number format
-      // You can set an error state or handle it as needed
       console.log("Invalid phone number format");
       setValidationAlert(true);
     } else {
