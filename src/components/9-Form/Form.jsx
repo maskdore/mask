@@ -123,36 +123,11 @@ function Form({ language }) {
 
   function handleInputChange(e) {
     const { name, value } = e.target;
-
-    // For phone numbers, allow both Arabic and English digits
-    if (name === 'Phone1') {
-      // Allow Arabic numerals, English numerals, spaces, plus, and hyphens
-      const isValidChar = /^[\u0660-\u0669\u06F0-\u06F9\d\s+\-()]*$/.test(value);
-      if (!isValidChar && value !== '') {
-        return;
-      }
-      
-      // Convert Arabic numerals to English if present
-      let convertedValue = value.replace(/[\u0660-\u0669\u06F0-\u06F9]/g, function(d) {
-        return d.charCodeAt(0) & 0xf;
-      });
-
-      // Remove any non-digit characters except + for country code
-      convertedValue = convertedValue.replace(/[^\d+]/g, '');
-      
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: convertedValue
-      }));
-      return;
-    }
-
+    // Accept any input for phone number without validation or conversion
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-
-    isFormValid();
   }
 
   // ==== For Submitions ====
@@ -162,17 +137,7 @@ function Form({ language }) {
     console.log("submitted");
     setLoading(true);
 
-    // Check if selectedOption is not empty
-    if (selectedOption !== "") {
-      // If not empty, set Quantity to selectedOption value
-      setFormData((prevData) => ({
-        ...prevData,
-        Quantity: selectedOption,
-      }));
-    }
-
     if (!isFormValid(selectedOption)) {
-      // Show alert if the form is not valid
       setShowFillAlert(true);
       setTimeout(() => {
         setShowFillAlert(false);
@@ -181,30 +146,37 @@ function Form({ language }) {
       return;
     }
 
-    // Create FormData object
-    const formEle = document.querySelector("form");
-    const formDataObj = new FormData(formEle);
-    
-    // Convert FormData to URL-encoded string
-    const urlEncodedData = new URLSearchParams();
-    urlEncodedData.append('Name', formData.Name);
-    urlEncodedData.append('Phone1', formData.Phone1.trim());
-    urlEncodedData.append('Address', formData.Address);
-    urlEncodedData.append('Quantity', selectedOption);
-    urlEncodedData.append('NameProduct', formData.NameProduct);
+    // Log data before submission
+    console.log("Submitting data:", {
+      Name: formData.Name,
+      Phone1: formData.Phone1,
+      Address: formData.Address,
+      Quantity: selectedOption,
+      NameProduct: formData.NameProduct
+    });
 
-    // Send data as URL-encoded
+    // Prepare data in SheetDB format
+    const data = {
+      data: [{
+        Name: formData.Name,
+        Phone1: formData.Phone1,
+        Address: formData.Address,
+        Quantity: selectedOption,
+        NameProduct: formData.NameProduct
+      }]
+    };
+
+    // Send data as JSON
     fetch("https://sheetdb.io/api/v1/10gjf6eedx0vm", {
       method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
-      body: urlEncodedData
+      body: JSON.stringify(data)
     })
-      .then((res) => res.text())
-      .then((data) => {
-        console.log("Form submission response:", data);
-        // Clear input fields after successful submission
+      .then((res) => res.json())
+      .then((response) => {
+        console.log("Response from server:", response);
         setFormData({
           Name: "",
           Phone1: "",
@@ -212,20 +184,17 @@ function Form({ language }) {
           Quantity: "",
           NameProduct: "Deep Sleep Mask",
         });
-        setSelectedOption("")
-        // Show success alert
+        setSelectedOption("");
         setShowSuccessAlert(true);
         setLoading(false);
-        // Hide success alert after 3 seconds (adjust as needed)
         setTimeout(() => {
           setShowSuccessAlert(false);
-          // Change the location after successful submission
           history('/thank_you_page');
           handleLinkClick();
         }, 1000);
       })
       .catch((error) => {
-        console.log("Form submission error:", error);
+        console.log("Submission error:", error);
         setLoading(false);
       });
   }
