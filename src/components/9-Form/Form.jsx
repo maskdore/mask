@@ -131,6 +131,17 @@ function Form({ language }) {
       if (!isValidChar && value !== '') {
         return;
       }
+      
+      // Convert Arabic numerals to English if present
+      const convertedValue = value.replace(/[\u0660-\u0669\u06F0-\u06F9]/g, function(d) {
+        return d.charCodeAt(0) & 0xf;
+      });
+
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: convertedValue
+      }));
+      return;
     }
 
     setFormData((prevData) => ({
@@ -167,26 +178,28 @@ function Form({ language }) {
       return;
     }
 
-    const submissionFormData = {
-      ...formData,
-      Quantity: selectedOption,
+    // Prepare the data for submission
+    const submissionData = {
+      data: [{
+        Name: formData.Name,
+        Phone1: formData.Phone1.trim(), // Ensure phone number is trimmed
+        Address: formData.Address,
+        Quantity: selectedOption,
+        NameProduct: formData.NameProduct
+      }]
     };
 
-    // Create a new FormData instance
-    const formDataObj = new FormData();
-    
-    // Add each field manually to ensure proper encoding
-    Object.keys(submissionFormData).forEach(key => {
-      formDataObj.append(key, submissionFormData[key]);
-    });
-
+    // Send data as JSON
     fetch("https://sheetdb.io/api/v1/10gjf6eedx0vm", {
       method: "POST",
-      body: formDataObj,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(submissionData)
     })
-      .then((res) => res.text())
+      .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        console.log("Form submission response:", data);
         // Clear input fields after successful submission
         setFormData({
           Name: "",
@@ -203,12 +216,12 @@ function Form({ language }) {
         setTimeout(() => {
           setShowSuccessAlert(false);
           // Change the location after successful submission
-          history('/thank_you_page');  // Updated path for Netlify deployment
+          history('/thank_you_page');
           handleLinkClick();
         }, 1000);
       })
       .catch((error) => {
-        console.log(error);
+        console.log("Form submission error:", error);
         setLoading(false);
       });
   }
@@ -248,7 +261,6 @@ function Form({ language }) {
     const phoneRegex = /^[\u0660-\u0669\u06F0-\u06F9\d\s+\-()]{8,}$/;
 
     if (!phoneRegex.test(formData.Phone1)) {
-      // Invalid phone number format
       console.log("Invalid phone number format");
       setValidationAlert(true);
     } else {
