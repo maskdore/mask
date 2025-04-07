@@ -34,7 +34,7 @@ function Form({ language }) {
   // ==== For Put Data ====
   const [formData, setFormData] = useState({
     Name: "",
-    Phone1: "",
+    Phone: "",
     Address: "",
     Quantity: "",
     NameProduct: "Deep Sleep Mask",
@@ -149,7 +149,7 @@ function Form({ language }) {
     // Log data before submission
     console.log("Submitting data:", {
       Name: formData.Name,
-      Phone1: formData.Phone1,
+      Phone: formData.Phone,
       Address: formData.Address,
       Quantity: selectedOption,
       NameProduct: formData.NameProduct
@@ -159,7 +159,7 @@ function Form({ language }) {
     const data = {
       data: [{
         Name: formData.Name,
-        Phone1: formData.Phone1,
+        Phone: formData.Phone,
         Address: formData.Address,
         Quantity: selectedOption,
         NameProduct: formData.NameProduct
@@ -179,7 +179,7 @@ function Form({ language }) {
         console.log("Response from server:", response);
         setFormData({
           Name: "",
-          Phone1: "",
+          Phone: "",
           Address: "",
           Quantity: "",
           NameProduct: "Deep Sleep Mask",
@@ -211,7 +211,7 @@ function Form({ language }) {
   //   // Reset any other state values if needed
   //   setFormData({
   //     Name: "",
-  //     Phone1: "",
+  //     Phone: "",
   //     Address: "",
   //     Quantity: "",
   //     NameProduct: "Deep Slack Mask",
@@ -233,7 +233,7 @@ function Form({ language }) {
     // Updated regex to accept both Arabic and English numbers, with optional country code
     const phoneRegex = /^[\u0660-\u0669\u06F0-\u06F9\d\s+\-()]{8,}$/;
 
-    if (!phoneRegex.test(formData.Phone1)) {
+    if (!phoneRegex.test(formData.Phone)) {
       console.log("Invalid phone number format");
       setValidationAlert(true);
     } else {
@@ -290,8 +290,8 @@ function Form({ language }) {
             type="text"
             id="phone"
             placeholder={t("phone_number_field")}
-            name="Phone1"
-            value={formData.Phone1}
+            name="Phone"
+            value={formData.Phone}
             onChange={(e) => {
               handleInputChange(e);
               validatePhone();
