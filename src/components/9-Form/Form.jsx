@@ -133,10 +133,13 @@ function Form({ language }) {
       }
       
       // Convert Arabic numerals to English if present
-      const convertedValue = value.replace(/[\u0660-\u0669\u06F0-\u06F9]/g, function(d) {
+      let convertedValue = value.replace(/[\u0660-\u0669\u06F0-\u06F9]/g, function(d) {
         return d.charCodeAt(0) & 0xf;
       });
 
+      // Remove any non-digit characters except + for country code
+      convertedValue = convertedValue.replace(/[^\d+]/g, '');
+      
       setFormData((prevData) => ({
         ...prevData,
         [name]: convertedValue
@@ -178,26 +181,27 @@ function Form({ language }) {
       return;
     }
 
-    // Prepare the data for submission
-    const submissionData = {
-      data: [{
-        Name: formData.Name,
-        Phone1: formData.Phone1.trim(), // Ensure phone number is trimmed
-        Address: formData.Address,
-        Quantity: selectedOption,
-        NameProduct: formData.NameProduct
-      }]
-    };
+    // Create FormData object
+    const formEle = document.querySelector("form");
+    const formDataObj = new FormData(formEle);
+    
+    // Convert FormData to URL-encoded string
+    const urlEncodedData = new URLSearchParams();
+    urlEncodedData.append('Name', formData.Name);
+    urlEncodedData.append('Phone1', formData.Phone1.trim());
+    urlEncodedData.append('Address', formData.Address);
+    urlEncodedData.append('Quantity', selectedOption);
+    urlEncodedData.append('NameProduct', formData.NameProduct);
 
-    // Send data as JSON
+    // Send data as URL-encoded
     fetch("https://sheetdb.io/api/v1/10gjf6eedx0vm", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(submissionData)
+      body: urlEncodedData
     })
-      .then((res) => res.json())
+      .then((res) => res.text())
       .then((data) => {
         console.log("Form submission response:", data);
         // Clear input fields after successful submission
